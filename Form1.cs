@@ -25,9 +25,10 @@ namespace CuentasITECI_SQ
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            MessageBox.Show("Ingresa los apellidos del estudiante");
+
             tbLastName.Select();
             tbLastName.Focus();
+            MessageBox.Show("Ingresa los apellidos del estudiante");
         }
 
         private string ClaveCarrera(string clave)

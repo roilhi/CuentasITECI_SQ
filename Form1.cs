@@ -25,10 +25,14 @@ namespace CuentasITECI_SQ
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            /*
             tbLastName.Select();
             tbLastName.Focus();
-            MessageBox.Show("Ingresa los apellidos del estudiante");
+            */
+            MessageBox.Show("Seleccione opción de búsqueda");
+            cboOption.Select();
+            cboOption.Focus();
+
         }
 
         private string ClaveCarrera(string clave)
@@ -73,54 +77,105 @@ namespace CuentasITECI_SQ
             if (e.KeyCode == Keys.Enter)
             {
                 tbLastName.Text = tbLastName.Text.Trim().ToUpper();
-                MessageBox.Show("Ingresa los nombres del estudiante");
+                MessageBox.Show("Ingresa los apellidos del estudiante o docente");
                 tbName.Select();
                 tbName.Focus();
             }
         }
         private void tbName_KeyDown(object sender, KeyEventArgs e) 
+        {
+            if (e.KeyCode == Keys.Enter) 
+            {
+                tbName.Text = tbName.Text.Trim().ToUpper();
+                if (cboOption.SelectedIndex == -1)
                 {
-                    if (e.KeyCode == Keys.Enter) 
-                    {
-                        tbName.Text = tbName.Text.Trim().ToUpper();
-                        // cluster mongo sistemas UNIENS
-                        // mongodb+srv://uniens:uniens22@cluster0.ex5nn.mongodb.net/?retryWrites=true&w=majority?connect=replicaSet
-                        // var settings = MongoClientSettings.FromConnectionString("mongodb+srv://itecidb2:iteci2021@clusteriteci.rnxhk.mongodb.net/Prepa_ITECI_Ens?connect=replicaSet");
-                        string wName = tbLastName.Text + " " + tbName.Text;
-                        var settings = MongoClientSettings.FromConnectionString("mongodb+srv://uniens:uniens22@cluster0.ex5nn.mongodb.net/?retryWrites=true&w=majority?connect=replicaSet");
-                        var client = new MongoClient(settings);
-                        var database = client.GetDatabase("studSQ");
-                        var collection = database.GetCollection<BsonDocument>("infoMails");
-                        var filter = Builders<BsonDocument>.Filter.Eq("wholeName", wName);
-                        var BsonDoc = collection.Find(filter).FirstOrDefault();
-               try
+                    MessageBox.Show("Por favor seleccione una opción de búsqueda");
+                }
+                else if (cboOption.Text == "Alumno")
                 {
-                    //string MoodleUser = BsonDoc["MoodleUser"].AsString;
-                    //tbUser.Text = MoodleUser;
-                    if (BsonDoc != null)
+                    // cluster mongo sistemas UNIENS
+                    // mongodb+srv://uniens:uniens22@cluster0.ex5nn.mongodb.net/?retryWrites=true&w=majority?connect=replicaSet
+                    // var settings = MongoClientSettings.FromConnectionString("mongodb+srv://itecidb2:iteci2021@clusteriteci.rnxhk.mongodb.net/Prepa_ITECI_Ens?connect=replicaSet");
+                    string wName = tbLastName.Text + " " + tbName.Text;
+                    var settings = MongoClientSettings.FromConnectionString("mongodb+srv://uniens:uniens22@cluster0.ex5nn.mongodb.net/?retryWrites=true&w=majority?connect=replicaSet");
+                    var client = new MongoClient(settings);
+                    var database = client.GetDatabase("studSQ");
+                    var collection = database.GetCollection<BsonDocument>("infoMails");
+                    var filter = Builders<BsonDocument>.Filter.Eq("wholeName", wName);
+                    var BsonDoc = collection.Find(filter).FirstOrDefault();
+                    try
                     {
-                        string password = BsonDoc["password"].AsString;
-                        tbPassword.Text = password;
-                        string email = BsonDoc["mail"].AsString;
-                        tbemail.Text = email;
-                        string matInt = BsonDoc["matInt"].AsString;
-                        tbMat.Text = matInt;
-                        string clave = BsonDoc["carrera"].AsString;
-                        tbCarrera.Text = ClaveCarrera(clave);
-                    }
-                    else 
-                    {
-                        MetroMessageBox.Show(this, "El usuario no existe, favor de verificar", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
-                        }
-                        catch
+                        //string MoodleUser = BsonDoc["MoodleUser"].AsString;
+                        //tbUser.Text = MoodleUser;
+                        if (BsonDoc != null)
                         {
-                            MetroMessageBox.Show(this, "Error en la conexión con la base de datos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            string password = BsonDoc["password"].AsString;
+                            tbPassword.Text = password;
+                            string email = BsonDoc["mail"].AsString;
+                            tbemail.Text = email;
+                            string matInt = BsonDoc["matInt"].AsString;
+                            tbMat.Text = matInt;
+                            string clave = BsonDoc["carrera"].AsString;
+                            tbCarrera.Text = ClaveCarrera(clave);
+                            string turno = BsonDoc["turno"].AsString;
+                            tbTurno.Text = turno;
+                            string cuatri = BsonDoc["cuatri"].AsString;
+                            tbCuatri.Text = cuatri;
+
+                        }
+                        else
+                        {
+                            MetroMessageBox.Show(this, "El usuario no existe, favor de verificar", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
+                    }
+                    catch
+                    {
+                        MetroMessageBox.Show(this, "Error en la conexión con la base de datos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                else if (cboOption.Text == "Docente") 
+                {
+                    string wName = tbName.Text + " " + tbLastName.Text;
+                    var settings = MongoClientSettings.FromConnectionString("mongodb+srv://uniens:uniens22@cluster0.ex5nn.mongodb.net/?retryWrites=true&w=majority?connect=replicaSet");
+                    var client = new MongoClient(settings);
+                    var database = client.GetDatabase("studSQ");
+                    var collection = database.GetCollection<BsonDocument>("docentSQ");
+                    var filter = Builders<BsonDocument>.Filter.Eq("wholeName", wName);
+                    var BsonDoc = collection.Find(filter).FirstOrDefault();
+                    try
+                    {
+                        //string MoodleUser = BsonDoc["MoodleUser"].AsString;
+                        //tbUser.Text = MoodleUser;
+                        if (BsonDoc != null)
+                        {
+                            string password = BsonDoc["password"].AsString;
+                            tbPassword.Text = password;
+                            string email = BsonDoc["email"].AsString;
+                            tbemail.Text = email;
+                            string matInt = BsonDoc["id"].AsString;
+                            tbMat.Text = matInt;
+                           /* string clave = BsonDoc["carrera"].AsString;
+                            tbCarrera.Text = ClaveCarrera(clave);
+                            string turno = BsonDoc["turno"].AsString;
+                            tbTurno.Text = turno;
+                            string cuatri = BsonDoc["cuatri"].AsString;
+                            tbCuatri.Text = cuatri;*/
+                        }
+                        else
+                        {
+                            MetroMessageBox.Show(this, "El usuario no existe, favor de verificar", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                    }
+                    catch
+                    {
+                        MetroMessageBox.Show(this, "Error en la conexión con la base de datos", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                }
+            }            
+        }
         
         private void btnBorrar_Click(object sender, EventArgs e)
         {
@@ -131,6 +186,9 @@ namespace CuentasITECI_SQ
             tbMat.Text = " ";
             tbCarrera.Text = " ";
             tbMat.Text = " ";
+            tbTurno.Text = " ";
+            tbCuatri.Text = " ";
         }
+
     }
 }
